@@ -1,0 +1,72 @@
+import copy
+
+start = [[1, 3, 5], [4, None, 2], [6, 7, 8]]
+goal = [[1, 3, None], [4, 2, 5], [6, 7, 8]]
+
+def checkgoal(a, b):
+    return a == b
+
+def misplaced(a, b):
+    count = sum(1 for i in range(3) for j in range(3) if a[i][j] != b[i][j] and a[i][j] is not None)
+    return count
+
+def emptytile(state):
+    for i in range(3):
+        for j in range(3):
+            if state[i][j] is None:
+                return i, j
+
+def generatemoves(state):
+    x, y = emptytile(state)
+    moves = []
+    possible_moves = {
+        "Up": (x - 1, y),
+        "Down": (x + 1, y),
+        "Left": (x, y - 1),
+        "Right": (x, y + 1)
+    }
+    for move in possible_moves.values():
+        if 0 <= move[0] < 3 and 0 <= move[1] < 3:
+            moves.append(move)
+    return moves
+
+def generatestates(state):
+    children = []
+    misplaced_counts = []
+    x, y = emptytile(state)
+    possible_moves = generatemoves(state)
+    for new_x, new_y in possible_moves:
+        new_state = copy.deepcopy(state)
+        new_state[x][y], new_state[new_x][new_y] = new_state[new_x][new_y], new_state[x][y]
+        h = misplaced(new_state, goal)
+        children.append(new_state)
+        misplaced_counts.append(h)
+    if misplaced_counts:
+        best_index = misplaced_counts.index(min(misplaced_counts))
+        return children[best_index]
+    return None
+
+def hillclimb(start, goal):
+    if checkgoal(start, goal):
+        print("Start state is already the goal state!")
+        return
+    max_iterations = 10
+    current_state = start
+    for i in range(1, max_iterations + 1):
+        print(f"\nIteration {i}:")
+        for row in current_state:
+            print(row)
+        next_state = generatestates(current_state)
+        if next_state is None or checkgoal(next_state, current_state):
+            print("No better state found. Stopping search.")
+            return
+        if checkgoal(next_state, goal):
+            print("\nGoal state reached!")
+            for row in next_state:
+                print(row)
+            print(f"Total Steps: {i}")
+            return
+        current_state = next_state
+    print("Max iterations reached. Stopping search.")
+
+hillclimb(start, goal)
