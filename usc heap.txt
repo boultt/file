@@ -1,0 +1,51 @@
+import heapq
+import copy
+
+def uniform_cost_search(graph, start, goal):
+    path = []
+    visited = set() 
+    path_cost = 0
+    
+    if start == goal:
+        return path, path_cost, visited
+
+    priority_queue = [(path_cost, [start])]  
+
+    while priority_queue:
+        path_cost, current_path = heapq.heappop(priority_queue)
+        current_node = current_path[-1]
+        
+        if current_node == goal:
+            return current_path, path_cost, visited
+
+        if current_node in visited:
+            continue
+            
+        visited.add(current_node)
+
+        neighbors = graph.get(current_node, [])  
+        for cost, neighbor in neighbors:
+            new_path_cost = path_cost + cost
+            new_path = copy.copy(current_path)
+            new_path.append(neighbor)
+
+            if neighbor not in visited:
+                heapq.heappush(priority_queue, (new_path_cost, new_path))
+
+    return path, path_cost, visited  
+
+graph2 = {
+    'S': [(1, 'A'), (12, 'G')],
+    'A': [(3, 'B'), (1, 'C')],
+    'B': [(3, 'D')],
+    'C': [(1, 'D'), (2, 'G')],
+    'D': [(3, 'G')]
+}
+
+ufs = uniform_cost_search(graph2, 'S', 'G')
+
+path, path_cost, visited = ufs
+
+print("Path:", path)
+print("Path Cost:", path_cost)
+print("Visited Nodes:", visited)
