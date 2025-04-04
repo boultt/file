@@ -1,0 +1,24 @@
+import math
+def minimax (curDepth, nodeIndex,maxTurn, scores, targetDepth):
+  if (curDepth == targetDepth):
+     print("Minmax values",scores[nodeIndex])
+     return scores[nodeIndex]
+
+  if (maxTurn):
+    MX = max(minimax(curDepth + 1, nodeIndex * 2, False, scores, targetDepth),
+             minimax(curDepth + 1, nodeIndex * 2 + 1, False, scores, targetDepth))
+    print("Max value selected is ",MX)
+    return MX
+
+  else:
+    MIN = min(minimax(curDepth + 1, nodeIndex * 2, True, scores, targetDepth),
+              minimax(curDepth + 1, nodeIndex * 2 + 1, True, scores, targetDepth))
+    print("Min value selected is ",MIN)
+    return MIN
+
+scores = [10,2,12,16,2,7,-5,-80]
+
+treeDepth = math.log(len(scores), 2)
+
+ans = minimax(0, 0, False, scores, treeDepth)
+print("The optimal value is : ", ans)
