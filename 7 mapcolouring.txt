@@ -1,0 +1,47 @@
+domain=['R','B','G']
+assigned = {'WA':None,'NT':None,'Q':None,'NSW':None,'V':None,'SA':None,'T':None}
+neighbours = {'WA':['NT','SA',],'NT':['WA','SA','Q'],'Q':['NT','SA','NSW'],'NSW':['Q','SA','V'],'V':['NSW','SA'],'SA':['WA','NT','Q','NSW','V'],'T':[]}
+
+def assigncol():
+  for key in assigned.keys():
+    i,flag=0,0
+    current = key
+    if assigned[current]==None:
+      while i<(len(domain)-1):
+        assigned[current]=(domain[i])
+        print('The assigned color for',current,'is',assigned[current])
+        flag=checkConst(current)
+        if flag==1:
+          i=i+1
+        else:
+          break
+    else:
+      continue
+
+def checkNbr(key):
+  for k,v in neighbours.items():
+    if k==key:
+      return neighbours[key]
+
+def checkConst(key):
+  flag=0
+  nblist=checkNbr(key)
+  for value in nblist:
+    if assigned[key]==assigned[value] and assigned[value] is not None:
+      print('constrain violated for',key)
+      assigned[key] = None
+      return 1
+  return flag
+
+assigncol()
+print('The map is assigned following colors')
+print(assigned)
+
+def get_degree_of_map():
+    degree = {}
+    for region in neighbours:
+        degree[region] = len(neighbours[region])
+    return degree
+
+degree_of_map = get_degree_of_map()
+print("Degree of each region in the map:", degree_of_map)
